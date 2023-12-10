@@ -1,0 +1,3 @@
+{
+    "files": ["User.py","Task.py","main.py","view.ui","UserDatabase.py","Application.py","Model.py","UserController.py","Database.py"]
+}
