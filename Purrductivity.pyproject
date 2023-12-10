@@ -1,3 +1,3 @@
 {
-    "files": ["Database.py","User.py","Application.py","Model.py","UserController.py","UserView.py","UserDatabase.py","main.py","Task.py","view.ui","TaskView.py"]
+    "files": ["src/User.py","src/UserView.py","src/TaskView.py","src/Model.py","src/view.ui","src/UserDatabase.py","src/Database.py","src/Application.py","src/UserController.py","src/Task.py","src/main.py","src/Checkpoint.py"]
 }

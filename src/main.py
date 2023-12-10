@@ -11,7 +11,7 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     # sets up my custom font
-    QFontDatabase().addApplicationFont("Daydream.ttf")
+    QFontDatabase().addApplicationFont("Assets/Daydream.ttf")
     app.setFont(QFont("Daydream"))
 
     # sets up user controller
