@@ -23,3 +23,6 @@ class UserController():
 
     def get_task_count(self):
         return self.user.get_task_count()
+
+    def add_task(self):
+        self.user.increment_task_count()

@@ -19,7 +19,7 @@ class UserView(Application):
         self.task_count.setVisible(False)
         self.add_task_button = self.app.get_button_widget("add_task_button")
         self.add_task_button.setVisible(False)
-        self.add_task_button.clicked.connect(self.update_task_count)
+        self.add_task_button.clicked.connect(self.task_added)
 
     def add_model(self, model):
         self.model = model
@@ -40,12 +40,16 @@ class UserView(Application):
     def remove_login(self):
         self.name_prompt.setParent(None)
         self.name_input.setParent(None)
+        self.show_task_count()
+
+    def task_added(self):
+        self.controller.add_task()
+        self.update_task_count()
 
     def show_task_count(self):
-        self.task_count.setText(f"You have {self.model.num_tasks} tasks")
+        self.update_task_count()
         self.task_count.setVisible(True)
         self.add_task_button.setVisible(True)
 
     def update_task_count(self):
-        self.model.num_tasks += 1
         self.task_count.setText(f"You have {self.model.num_tasks} tasks")

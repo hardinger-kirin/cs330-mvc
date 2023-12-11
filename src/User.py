@@ -34,3 +34,6 @@ class User(Model):
 
     def get_task_count(self):
         return self.num_tasks
+
+    def increment_task_count(self):
+        self.num_tasks += 1
