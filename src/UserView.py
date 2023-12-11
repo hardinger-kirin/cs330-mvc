@@ -1,5 +1,6 @@
 from Application import Application
 from PyQt5.QtGui import QMovie
+from PyQt5.QtWidgets import QAbstractItemView, QTableWidgetItem
 
 
 class UserView(Application):
@@ -23,8 +24,15 @@ class UserView(Application):
         self.add_task_button.clicked.connect(self.prompt_task)
 
         # initializes widgets for the cat gif, representing the user's progress
+        self.progress_label = self.app.get_label_widget("progress_label")
+        self.progress_label.setVisible(False)
         self.gif_widget = self.app.get_label_widget("gif")
         self.gif_widget.setVisible(False)
+
+        # initializes widgets for the task table view
+        self.task_table = self.app.get_table_widget("task_table")
+        self.task_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.task_table.setVisible(False)
 
     def add_model(self, model):
         self.model = model
@@ -48,6 +56,9 @@ class UserView(Application):
         self.input.clear()
         self.show_task_count()
         self.show_cat()
+        self.show_progress()
+        if self.model.get_task_count() != 0:
+            self.show_task_table()
 
     def prompt_task(self):
         self.prompt.setText("Enter task name:")
@@ -66,6 +77,8 @@ class UserView(Application):
     def task_added(self):
         self.update_task_count()
         self.update_cat()
+        self.update_progress()
+        self.show_task_table()
 
     def show_task_count(self):
         self.update_task_count()
@@ -87,3 +100,36 @@ class UserView(Application):
             self.gif = QMovie("Assets/sad.gif")
         self.gif_widget.setMovie(self.gif)
         self.gif.start()
+
+    def show_progress(self):
+        self.update_progress()
+        self.progress_label.setVisible(True)
+
+    def update_progress(self):
+        progress = self.model.get_progress()
+        if progress == -1:
+            progress = 1
+        self.progress_label.setText(f"Progress: {progress * 100}%")
+
+    def show_task_table(self):
+        self.task_table.setVisible(True)
+        self.update_task_table()
+
+    def add_db(self, db):
+        self.db = db
+
+    def update_task_table(self):
+        self.task_table.setRowCount(self.model.get_task_count())
+        self.task_table.setColumnCount(1)
+        row = 0
+        for task in self.model.get_tasks():
+            if task[3] == 1:
+                status = "Complete"
+            else:
+                status = "Incomplete"
+            self.task_table.setHorizontalHeaderItem(row,
+                                                    QTableWidgetItem("Status"))
+            self.task_table.setVerticalHeaderItem(row,
+                                                  QTableWidgetItem(task[2]))
+            self.task_table.setItem(row, 0, QTableWidgetItem(status))
+            row += 1

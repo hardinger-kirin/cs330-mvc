@@ -28,7 +28,7 @@ class UserController():
     def add_task(self, name):
         self.db.add_task_entry(self.db.find_user_entry(self.user.get_name()),
                                name)
-        self.user.increment_task_count()
+        self.get_tasks(self.db.find_user_entry(self.user.get_name()))
 
     def get_tasks(self, id):
         task_list = self.db.load_tasks(id)
@@ -37,3 +37,4 @@ class UserController():
         else:
             self.user.set_tasks(task_list)
             self.user.set_task_count(len(task_list))
+            return task_list

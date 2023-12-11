@@ -33,3 +33,10 @@ class Application(object):
             if child is not None:
                 return child
         return None
+
+    def get_table_widget(self, label):
+        for widget in self.app.allWidgets():
+            child = widget.findChild(QtWidgets.QTableWidget, label)
+            if child is not None:
+                return child
+        return None
