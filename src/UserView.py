@@ -14,13 +14,18 @@ class UserView(Application):
         self.hello_label = self.app.get_label_widget("hello_label")
         self.name_input.returnPressed.connect(self.name_entered)
 
+    def add_model(self, model):
+        self.model = model
+
     # updates the view to display the name
     # passes info off to controller to handle adding user to the database
     def name_entered(self):
         self.name_prompt.setText("")
         self.hello_label.setText(f"Hello, {self.name_input.text()}")
         self.controller.generate_user(self.name_input.text())
-        # removes prompt and text box to prevent entering another name
+        self.app.show_tasks(self.model.get_task_count())
+
+    # removes prompt and text box to prevent entering another name
+    def remove_login(self):
         self.name_prompt.setParent(None)
         self.name_input.setParent(None)
-        self.app.show_tasks(self.controller.get_task_count())

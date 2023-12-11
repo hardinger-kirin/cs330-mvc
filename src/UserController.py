@@ -1,12 +1,9 @@
-# import View
-from UserDatabase import UserDatabase
 from User import User
 
 
-class UserController:
-    def __init__(self, db_name):
-        self.db_name = db_name
-        self.db = UserDatabase(db_name)
+class UserController():
+    def __init__(self, db):
+        self.db = db
 
     def add_view(self, view):
         self.view = view
@@ -16,10 +13,10 @@ class UserController:
     # if so, load the user's information from the database
     def generate_user(self, name):
         self.user = User(name)
-        if self.db.find_entry(name) == 0:
-            self.db.add_entry(name)
-        else:
-            pass
+        self.view.add_model(self.user)
+        if self.db.find_user_entry(name) == 0:
+            self.db.add_user_entry(name)
+        self.view.remove_login()
 
     def get_task_count(self):
         return self.user.get_task_count()

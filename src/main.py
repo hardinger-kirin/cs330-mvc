@@ -1,6 +1,8 @@
 import sys
+from Database import Database
 from Application import Application
 from UserController import UserController
+from TaskController import TaskController
 from TaskView import TaskView
 from UserView import UserView
 from PyQt5.QtGui import QFontDatabase, QFont
@@ -14,8 +16,12 @@ if __name__ == "__main__":
     QFontDatabase().addApplicationFont("Assets/Daydream.ttf")
     app.setFont(QFont("Daydream"))
 
-    # sets up user controller
-    user_c = UserController("users.sqlite")
+    # sets up database
+    db = Database("info.sqlite")
+
+    # sets up controllers
+    user_c = UserController(db)
+    task_c = TaskController(db)
 
     # creates and executes an application using the view.ui file
     # separates application into model views
