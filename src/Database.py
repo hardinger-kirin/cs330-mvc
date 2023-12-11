@@ -25,10 +25,13 @@ class Database():
         QSqlQuery(self.con).exec(
             """
             CREATE TABLE tasks (
-                task_id int NOT NULL,
-                user_id int NOT NULL,
-                PRIMARY KEY (task_id),
-                FOREIGN KEY (user_id) REFERENCES users(user_id)
+                task_id INTEGER PRIMARY KEY UNIQUE,
+                user_id INTEGER NOT NULL,
+                task_name VARCHAR(40) NOT NULL,
+                status VARCHAR(1) NOT NULL,
+                CONSTRAINT fk_users
+                FOREIGN KEY (user_id)
+                REFERENCES users(user_id)
             )
             """
         )
@@ -52,3 +55,24 @@ class Database():
             if q.value(1) == term:
                 return q.value(0)
         return 0
+
+    def add_task_entry(self, user_id, task_name):
+        QSqlQuery(self.con).exec(
+            f"""
+            INSERT INTO tasks (user_id, task_name, status)
+            VALUES ({user_id},'{task_name}', 0)
+            """
+        )
+
+    def load_tasks(self, user_id):
+        q = QSqlQuery(self.con)
+        q.exec_(
+            f"""
+                SELECT * from tasks where user_id = {user_id}
+            """
+        )
+        tasks = []
+        while q.next():
+            tasks.append([q.value(0), q.value(1), q.value(2),
+                          q.value(3)])
+        return tasks

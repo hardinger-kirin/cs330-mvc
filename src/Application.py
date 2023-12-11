@@ -6,12 +6,6 @@ class Application(object):
         self.app = app
         self.ui = uic.loadUi(ui_file)
 
-    def add_user_v(self, user_v):
-        self.user_v = user_v
-
-    def add_task_v(self, task_v):
-        self.task_v = task_v
-
     def run(self):
         self.ui.show()
         self.app.exec()

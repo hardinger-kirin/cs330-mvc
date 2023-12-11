@@ -1,4 +1,5 @@
 from Application import Application
+from PyQt5.QtGui import QMovie
 
 
 class UserView(Application):
@@ -9,17 +10,21 @@ class UserView(Application):
 
         # initializes widgets that handle username
         # upon pressing "enter", the user's name is updated
-        self.name_input = self.app.get_lineedit_widget("name_input")
-        self.name_prompt = self.app.get_label_widget("name_prompt")
+        self.input = self.app.get_lineedit_widget("input")
+        self.prompt = self.app.get_label_widget("prompt")
         self.hello_label = self.app.get_label_widget("hello_label")
-        self.name_input.returnPressed.connect(self.name_entered)
+        self.input.returnPressed.connect(self.name_entered)
 
         # initializes widgets for tasks the user has
         self.task_count = self.app.get_label_widget("task_count")
         self.task_count.setVisible(False)
         self.add_task_button = self.app.get_button_widget("add_task_button")
         self.add_task_button.setVisible(False)
-        self.add_task_button.clicked.connect(self.task_added)
+        self.add_task_button.clicked.connect(self.prompt_task)
+
+        # initializes widgets for the cat gif, representing the user's progress
+        self.gif_widget = self.app.get_label_widget("gif")
+        self.gif_widget.setVisible(False)
 
     def add_model(self, model):
         self.model = model
@@ -27,7 +32,7 @@ class UserView(Application):
     # updates the view to display the name
     # passes info off to controller to handle adding user to the database
     def name_entered(self):
-        self.controller.generate_user(self.name_input.text())
+        self.controller.generate_user(self.input.text())
         self.show_task_count()
 
     def say_hi(self, name):
@@ -38,13 +43,29 @@ class UserView(Application):
 
     # removes prompt and text box to prevent entering another name
     def remove_login(self):
-        self.name_prompt.setParent(None)
-        self.name_input.setParent(None)
+        self.prompt.setVisible(False)
+        self.input.setVisible(False)
+        self.input.clear()
         self.show_task_count()
+        self.show_cat()
+
+    def prompt_task(self):
+        self.prompt.setText("Enter task name:")
+        self.prompt.setVisible(True)
+        self.input.setVisible(True)
+        self.input.returnPressed.disconnect()
+        self.input.returnPressed.connect(self.add_task)
+
+    def add_task(self):
+        self.controller.add_task(self.input.text())
+        self.prompt.setVisible(False)
+        self.input.setVisible(False)
+        self.input.clear()
+        self.task_added()
 
     def task_added(self):
-        self.controller.add_task()
         self.update_task_count()
+        self.update_cat()
 
     def show_task_count(self):
         self.update_task_count()
@@ -52,4 +73,17 @@ class UserView(Application):
         self.add_task_button.setVisible(True)
 
     def update_task_count(self):
-        self.task_count.setText(f"You have {self.model.num_tasks} tasks")
+        self.task_count.setText(f"You have {self.model.get_task_count()}" +
+                                " tasks")
+
+    def show_cat(self):
+        self.update_cat()
+        self.gif_widget.setVisible(True)
+
+    def update_cat(self):
+        if self.model.get_progress() == -1 or self.model.get_progress() == 100:
+            self.gif = QMovie("Assets/happy.gif")
+        else:
+            self.gif = QMovie("Assets/sad.gif")
+        self.gif_widget.setMovie(self.gif)
+        self.gif.start()

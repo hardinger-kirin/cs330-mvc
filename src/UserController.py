@@ -8,6 +8,9 @@ class UserController():
     def add_view(self, view):
         self.view = view
 
+    def get_app(self):
+        return self.app
+
     # checks if a user with the given name already exists
     # if not, add it to the database
     # if so, load the user's information from the database
@@ -19,10 +22,18 @@ class UserController():
             self.db.add_user_entry(name)
         else:
             self.view.welcome_back(name)
+            self.get_tasks(self.db.find_user_entry(name))
         self.view.remove_login()
 
-    def get_task_count(self):
-        return self.user.get_task_count()
-
-    def add_task(self):
+    def add_task(self, name):
+        self.db.add_task_entry(self.db.find_user_entry(self.user.get_name()),
+                               name)
         self.user.increment_task_count()
+
+    def get_tasks(self, id):
+        task_list = self.db.load_tasks(id)
+        if task_list is None:
+            return
+        else:
+            self.user.set_tasks(task_list)
+            self.user.set_task_count(len(task_list))
