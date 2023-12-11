@@ -14,18 +14,38 @@ class UserView(Application):
         self.hello_label = self.app.get_label_widget("hello_label")
         self.name_input.returnPressed.connect(self.name_entered)
 
+        # initializes widgets for tasks the user has
+        self.task_count = self.app.get_label_widget("task_count")
+        self.task_count.setVisible(False)
+        self.add_task_button = self.app.get_button_widget("add_task_button")
+        self.add_task_button.setVisible(False)
+        self.add_task_button.clicked.connect(self.update_task_count)
+
     def add_model(self, model):
         self.model = model
 
     # updates the view to display the name
     # passes info off to controller to handle adding user to the database
     def name_entered(self):
-        self.name_prompt.setText("")
-        self.hello_label.setText(f"Hello, {self.name_input.text()}")
         self.controller.generate_user(self.name_input.text())
-        self.app.show_tasks(self.model.get_task_count())
+        self.show_task_count()
+
+    def say_hi(self, name):
+        self.hello_label.setText(f"Hello, {name}")
+
+    def welcome_back(self, name):
+        self.hello_label.setText(f"Welcome back, {name}")
 
     # removes prompt and text box to prevent entering another name
     def remove_login(self):
         self.name_prompt.setParent(None)
         self.name_input.setParent(None)
+
+    def show_task_count(self):
+        self.task_count.setText(f"You have {self.model.num_tasks} tasks")
+        self.task_count.setVisible(True)
+        self.add_task_button.setVisible(True)
+
+    def update_task_count(self):
+        self.model.num_tasks += 1
+        self.task_count.setText(f"You have {self.model.num_tasks} tasks")

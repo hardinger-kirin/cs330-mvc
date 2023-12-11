@@ -16,9 +16,6 @@ class Application(object):
         self.ui.show()
         self.app.exec()
 
-    def show_tasks(self, info):
-        self.task_v.show_tasks(info)
-
     # searches through all widgets for a line edit child with a given label
     # if found, returns the child
     # if not, returns None

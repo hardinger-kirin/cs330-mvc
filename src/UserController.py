@@ -15,7 +15,10 @@ class UserController():
         self.user = User(name)
         self.view.add_model(self.user)
         if self.db.find_user_entry(name) == 0:
+            self.view.say_hi(name)
             self.db.add_user_entry(name)
+        else:
+            self.view.welcome_back(name)
         self.view.remove_login()
 
     def get_task_count(self):
