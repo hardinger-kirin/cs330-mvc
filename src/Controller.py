@@ -1,7 +1,7 @@
 from User import User
 
 
-class UserController():
+class Controller():
     def __init__(self, db):
         self.db = db
 
@@ -28,6 +28,14 @@ class UserController():
     def add_task(self, name):
         self.db.add_task_entry(self.db.find_user_entry(self.user.get_name()),
                                name)
+        self.get_tasks(self.db.find_user_entry(self.user.get_name()))
+
+    def update_task(self, task_name, status):
+        self.db.update_task_entry(self.db.find_task_entry(task_name), status)
+        self.get_tasks(self.db.find_user_entry(self.user.get_name()))
+
+    def remove_task(self, task_name):
+        self.db.remove_task_entry(self.db.find_task_entry(task_name))
         self.get_tasks(self.db.find_user_entry(self.user.get_name()))
 
     def get_tasks(self, id):

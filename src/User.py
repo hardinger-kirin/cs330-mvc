@@ -37,13 +37,16 @@ class User():
     def increment_task_count(self):
         self.num_tasks += 1
 
+    def decrement_task_count(self):
+        self.num_tasks -= 1
+
     def get_progress(self):
         if self.num_tasks == 0:
             return -1
 
         num_complete = 0
         for array in self.tasks:
-            if array[3] == 1:
+            if array[3] == '1':
                 num_complete += 1
         self.progress = num_complete / self.num_tasks
         return self.progress

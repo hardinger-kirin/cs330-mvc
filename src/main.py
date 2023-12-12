@@ -1,7 +1,6 @@
 import sys
 from Database import Database
-from Application import Application
-from UserController import UserController
+from Controller import Controller
 from UserView import UserView
 from PyQt5.QtGui import QFontDatabase, QFont, QIcon
 from PyQt5.QtWidgets import QApplication
@@ -21,10 +20,9 @@ if __name__ == "__main__":
     db = Database("info.sqlite")
 
     # sets up controllers
-    user_c = UserController(db)
+    controller = Controller(db)
 
     # creates and executes an application using the view.ui file
     # separates application into model views
-    a = Application(app, 'view.ui')
-    user_v = UserView(a, user_c)
-    a.run()
+    user_v = UserView(app, 'view.ui', controller)
+    user_v.run()

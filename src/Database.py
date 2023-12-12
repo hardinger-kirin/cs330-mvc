@@ -64,6 +64,35 @@ class Database():
             """
         )
 
+    def remove_task_entry(self, task_id):
+        QSqlQuery(self.con).exec(
+            f"""
+            DELETE FROM tasks
+            WHERE task_id = {task_id}
+            """
+        )
+
+    def find_task_entry(self, term):
+        q = QSqlQuery(self.con)
+        q.exec_(
+            """
+            SELECT task_id, task_name from tasks
+            """
+        )
+        while q.next():
+            if q.value(1) == term:
+                return q.value(0)
+        return 0
+
+    def update_task_entry(self, task_id, status):
+        QSqlQuery(self.con).exec(
+            f"""
+            UPDATE tasks
+            SET status = {status}
+            WHERE task_id = {task_id}
+            """
+        )
+
     def load_tasks(self, user_id):
         q = QSqlQuery(self.con)
         q.exec_(
