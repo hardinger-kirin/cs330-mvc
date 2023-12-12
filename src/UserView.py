@@ -1,6 +1,7 @@
 from Application import Application
 from PyQt5.QtGui import QMovie
-from PyQt5.QtWidgets import QAbstractItemView, QTableWidgetItem
+from PyQt5.QtWidgets import QAbstractItemView, QTableWidgetItem, QCheckBox, \
+                            QPushButton, QHeaderView
 
 
 class UserView(Application):
@@ -14,6 +15,7 @@ class UserView(Application):
         self.input = self.app.get_lineedit_widget("input")
         self.prompt = self.app.get_label_widget("prompt")
         self.hello_label = self.app.get_label_widget("hello_label")
+        self.hello_label.setVisible(False)
         self.input.returnPressed.connect(self.name_entered)
 
         # initializes widgets for tasks the user has
@@ -53,6 +55,7 @@ class UserView(Application):
     def remove_login(self):
         self.prompt.setVisible(False)
         self.input.setVisible(False)
+        self.hello_label.setVisible(True)
         self.input.clear()
         self.show_task_count()
         self.show_cat()
@@ -118,18 +121,49 @@ class UserView(Application):
     def add_db(self, db):
         self.db = db
 
+    # referenced:
+    # https://stackoverflow.com/questions/24148968/how-to-add-multiple-qpushbuttons-to-a-qtableview
+    # for adding buttons to each row
+    # https://stackoverflow.com/questions/26141161/pyqt4-code-not-working-on-pyqt5-qheaderview
+    # for resizing columns to be dynamically stretched
     def update_task_table(self):
+        # sets row and column count, initializes column titles
         self.task_table.setRowCount(self.model.get_task_count())
-        self.task_table.setColumnCount(1)
+        self.task_table.setColumnCount(4)
+        self.task_table.setHorizontalHeaderItem(0,
+                                                QTableWidgetItem("Task"))
+        self.task_table.setHorizontalHeaderItem(1,
+                                                QTableWidgetItem("Status"))
+        self.task_table.setHorizontalHeaderItem(2,
+                                                QTableWidgetItem("Complete"))
+        self.task_table.setHorizontalHeaderItem(3,
+                                                QTableWidgetItem("Remove"))
         row = 0
         for task in self.model.get_tasks():
             if task[3] == 1:
                 status = "Complete"
             else:
                 status = "Incomplete"
-            self.task_table.setHorizontalHeaderItem(row,
-                                                    QTableWidgetItem("Status"))
             self.task_table.setVerticalHeaderItem(row,
-                                                  QTableWidgetItem(task[2]))
-            self.task_table.setItem(row, 0, QTableWidgetItem(status))
+                                                  QTableWidgetItem(row))
+            self.task_table.setItem(row, 0, QTableWidgetItem(task[2]))
+            self.task_table.setItem(row, 1, QTableWidgetItem(status))
+
+            self.check_comp = QCheckBox()
+            self.check_comp.stateChanged.connect(self.complete_task)
+            self.check_comp.setStyleSheet("margin-left:50%")
+            self.task_table.setCellWidget(row, 2, self.check_comp)
+
+            self.btn_rem = QPushButton('Remove')
+            self.btn_rem.clicked.connect(self.remove_task)
+            self.task_table.setCellWidget(row, 3, self.btn_rem)
+
+            header = self.task_table.horizontalHeader()
+            header.setSectionResizeMode(row, QHeaderView.Stretch)
             row += 1
+
+    def complete_task(self):
+        pass
+
+    def remove_task(self):
+        pass
